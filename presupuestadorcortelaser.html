@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuestador de Corte Láser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, select, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Presupuesto para Corte Láser</h1>
+    <form id="budget-form">
+        <select id="material">
+            <option value="mdf_3mm">MDF 3mm</option>
+            <option value="mdf_5mm">MDF 5.5mm</option>
+            <option value="mdf_9mm">MDF 9mm</option>
+            <option value="mdf_blanco">MDF Blanco</option>
+            <option value="acrilico">Acrílico</option>
+        </select>
+        <input type="number" id="width" placeholder="Ancho (cm)" required>
+        <input type="number" id="height" placeholder="Alto (cm)" required>
+        <input type="number" id="time" placeholder="Tiempo (minutos)" required step="0.01">
+        <button type="submit">Calcular</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        const materialData = {
+            mdf_3mm: { cost: 0.38 },
+            mdf_5mm: { cost: 0.53 },
+            mdf_9mm: { cost: 0.75 },
+            mdf_blanco: { cost: 0.64 },
+            acrilico: { cost: 8.55 }
+        };
+
+        const operatingCosts = 723; // Costo por minuto total
+
+        document.getElementById('budget-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const material = document.getElementById('material').value;
+            const width = parseFloat(document.getElementById('width').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const time = parseFloat(document.getElementById('time').value);
+
+            const area = width * height;
+            const materialCost = area * materialData[material].cost;
+            const operatingCost = time * operatingCosts;
+            const totalCost = materialCost + operatingCost;
+
+            const price30 = totalCost * 1.3;
+            const price50 = totalCost * 1.5;
+            const price100 = totalCost * 2;
+
+            document.getElementById('result').innerHTML = `
+                <h2>Resultados:</h2>
+                <table>
+                    <tr><th>Concepto</th><th>Valor</th></tr>
+                    <tr><td>Área</td><td>${area.toFixed(2)} cm²</td></tr>
+                    <tr><td>Tiempo</td><td>${time.toFixed(2)} minutos</td></tr>
+                    <tr><td>Costo de material</td><td>$${materialCost.toFixed(2)}</td></tr>
+                    <tr><td>Costo operativo</td><td>$${operatingCost.toFixed(2)}</td></tr>
+                    <tr><td>Costo total</td><td>$${totalCost.toFixed(2)}</td></tr>
+                    <tr><td>Precio (30% ganancia)</td><td>$${price30.toFixed(2)}</td></tr>
+                    <tr><td>Precio (50% ganancia)</td><td>$${price50.toFixed(2)}</td></tr>
+                    <tr><td>Precio (100% ganancia)</td><td>$${price100.toFixed(2)}</td></tr>
+                </table>
+            `;
+        });
+    </script>
+</body>
+</html>
