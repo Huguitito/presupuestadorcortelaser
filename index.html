@@ -1,117 +1,321 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presupuestador de Corte Laser</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        input, select, button {
-            width: 100%;
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #fff;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-        #result {
-            margin-top: 20px;
-        }
-    </style>
+<html><head><base href="https://example.com/laser-cut-budget-app/">
+<title>Presupuestador de Trabajos Láser</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  h1, h2 {
+    color: #333;
+  }
+
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+  }
+
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+
+  .results {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #e9e9e9;
+    border-radius: 4px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  #adminPanel {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+</style>
 </head>
 <body>
-    <h1>Calculadora de Presupuesto para Corte Laser</h1>
-    <form id="budget-form">
-        <select id="material">
-            <option value="mdf_3mm">MDF 3mm</option>
-            <option value="mdf_5mm">MDF 5.5mm</option>
-            <option value="mdf_9mm">MDF 9mm</option>
-            <option value="mdf_blanco">MDF Blanco</option>
-            <option value="acrilico">Acrílico</option>
-        </select>
-        <input type="number" id="width" placeholder="Ancho (cm)" required>
-        <input type="number" id="height" placeholder="Alto (cm)" required>
-        <input type="number" id="time" placeholder="Tiempo (minutos)" required step="0.01">
-        <button type="submit">Calcular</button>
-    </form>
-    <div id="result"></div>
+  <div class="container">
+    <h1>Presupuestador de Trabajos Láser</h1>
+    
+    <div>
+      <h2>Especificaciones del Trabajo</h2>
+      <label for="material">Material:</label>
+      <select id="material">
+        <!-- Options will be populated dynamically -->
+      </select>
+      
+      <label for="width">Ancho (mm):</label>
+      <input type="number" id="width" min="0" step="1">
+      
+      <label for="height">Alto (mm):</label>
+      <input type="number" id="height" min="0" step="1">
+      
+      <label for="time">Tiempo estimado (minutos):</label>
+      <input type="number" id="time" min="0" step="1">
+      
+      <button onclick="calculateCosts()">Calcular Costos</button>
+    </div>
 
-    <script>
-        const materialData = {
-            mdf_3mm: { cost: 0.37 },
-            mdf_5mm: { cost: 0.48 },
-            mdf_9mm: { cost: 0.75 },
-            mdf_blanco: { cost: 0.65 },
-            acrilico: { cost: 10.26 }
-        };
+    <div id="results" class="results"></div>
 
-        const operatingCosts = 765; // Costo por minuto total
+    <div>
+      <h2>Panel de Administración</h2>
+      <input type="password" id="adminPassword" placeholder="Ingrese la clave">
+      <button onclick="checkAdminPassword()">Acceder</button>
+    </div>
 
-        document.getElementById('budget-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const material = document.getElementById('material').value;
-            const width = parseFloat(document.getElementById('width').value);
-            const height = parseFloat(document.getElementById('height').value);
-            const time = parseFloat(document.getElementById('time').value);
+    <div id="adminPanel" class="hidden">
+      <h2>Gastos Operativos Mensuales</h2>
+      <label for="rent">Alquiler:</label>
+      <input type="number" id="rent" min="0">
+      
+      <label for="salaries">Sueldos:</label>
+      <input type="number" id="salaries" min="0">
+      
+      <label for="electricity">Luz:</label>
+      <input type="number" id="electricity" min="0">
+      
+      <label for="taxes">Impuestos:</label>
+      <input type="number" id="taxes" min="0">
+      
+      <label for="depreciation">Amortización:</label>
+      <input type="number" id="depreciation" min="0">
+      
+      <label for="laserTube">Tubo láser:</label>
+      <input type="number" id="laserTube" min="0">
+      
+      <label for="maintenance">Mantenimiento:</label>
+      <input type="number" id="maintenance" min="0">
+      
+      <button onclick="updateOperatingCosts()">Actualizar Costos Operativos</button>
 
-            const area = width * height;
-            const materialCost = area * materialData[material].cost;
-            const operatingCost = time * operatingCosts;
-            const totalCost = materialCost + operatingCost;
+      <h2>Gestión de Materiales</h2>
+      <div id="materialsList"></div>
+      <label for="newMaterial">Nuevo Material:</label>
+      <input type="text" id="newMaterial" placeholder="Nombre del material">
+      
+      <label for="newMaterialCost">Costo por plancha:</label>
+      <input type="number" id="newMaterialCost" min="0" step="0.01">
+      
+      <button onclick="addNewMaterial()">Agregar Material</button>
+    </div>
+  </div>
 
-            const price30 = totalCost * 1.3;
-            const price50 = totalCost * 1.5;
-            const price100 = totalCost * 2;
+  <script>
+    const SHEET_WIDTH = 1300; // mm
+    const SHEET_HEIGHT = 900; // mm
+    const SHEET_AREA = SHEET_WIDTH * SHEET_HEIGHT; // mm²
+    const ADMIN_PASSWORD = "0314";
 
-            document.getElementById('result').innerHTML = `
-                <h2>Resultados:</h2>
-                <table>
-                    <tr><td>Precio Emprendedores NO USAR</td><td>$${price30.toFixed(2)}</td></tr>
-                    <tr><td>Precio Mayorista</td><td>$${price50.toFixed(2)}</td></tr>
-                    <tr><td>Precio Minorista</td><td>$${price100.toFixed(2)}</td></tr>
-                </table>
-            `;
-        });
-    </script>
-</body>
-</html>
+    let materials = JSON.parse(localStorage.getItem('materials')) || {
+      mdf3: { name: "MDF 3mm", cost: 1000 },
+      mdf5: { name: "MDF 5mm", cost: 1500 },
+      mdf9: { name: "MDF 9mm", cost: 2000 },
+      mdfWhite: { name: "MDF Blanco", cost: 1800 },
+      acrylic: { name: "Acrílico", cost: 2500 }
+    };
+
+    let operatingCosts = JSON.parse(localStorage.getItem('operatingCosts')) || {
+      rent: 1000,
+      salaries: 2000,
+      electricity: 200,
+      taxes: 500,
+      depreciation: 300,
+      laserTube: 100,
+      maintenance: 150
+    };
+
+    let costPerMinute = 0;
+
+    function calculateCosts() {
+      const material = document.getElementById('material').value;
+      const width = parseFloat(document.getElementById('width').value);
+      const height = parseFloat(document.getElementById('height').value);
+      const time = parseFloat(document.getElementById('time').value);
+
+      const area = width * height; // mm²
+      const materialCostPerMm2 = materials[material].cost / SHEET_AREA;
+      const materialCost = area * materialCostPerMm2;
+      const operationCost = time * costPerMinute;
+      const totalCost = materialCost + operationCost;
+
+      const profit50 = totalCost * 1.5;
+      const profit100 = totalCost * 2;
+
+      const results = `
+        <h3>Resultados del Presupuesto</h3>
+        <p><strong>Material:</strong> ${materials[material].name}</p>
+        <p><strong>Área:</strong> ${(area / 100).toFixed(2)} cm² (${width}mm x ${height}mm)</p>
+        <p><strong>Tiempo:</strong> ${time} minutos</p>
+        <h4>Precios de Venta Sugeridos:</h4>
+        <p><strong>50% de ganancia:</strong> $${profit50.toFixed(2)}</p>
+        <p><strong>100% de ganancia:</strong> $${profit100.toFixed(2)}</p>
+        <button onclick="showDetailedResults()">Ver Detalles</button>
+      `;
+
+      document.getElementById('results').innerHTML = results;
+    }
+
+    function showDetailedResults() {
+      const password = prompt("Ingrese la clave para ver los detalles:");
+      if (password === ADMIN_PASSWORD) {
+        const material = document.getElementById('material').value;
+        const width = parseFloat(document.getElementById('width').value);
+        const height = parseFloat(document.getElementById('height').value);
+        const time = parseFloat(document.getElementById('time').value);
+
+        const area = width * height; // mm²
+        const materialCostPerMm2 = materials[material].cost / SHEET_AREA;
+        const materialCost = area * materialCostPerMm2;
+        const operationCost = time * costPerMinute;
+        const totalCost = materialCost + operationCost;
+
+        const profit30 = totalCost * 1.3;
+        const profit50 = totalCost * 1.5;
+        const profit100 = totalCost * 2;
+
+        const detailedResults = `
+          <h3>Resultados Detallados del Presupuesto</h3>
+          <p><strong>Material:</strong> ${materials[material].name}</p>
+          <p><strong>Área:</strong> ${(area / 100).toFixed(2)} cm² (${width}mm x ${height}mm)</p>
+          <p><strong>Tiempo:</strong> ${time} minutos</p>
+          <p><strong>Costo del material:</strong> $${materialCost.toFixed(2)}</p>
+          <p><strong>Costo de operación:</strong> $${operationCost.toFixed(2)}</p>
+          <p><strong>Costo total:</strong> $${totalCost.toFixed(2)}</p>
+          <h4>Precios de Venta Sugeridos:</h4>
+          <p><strong>30% de ganancia:</strong> $${profit30.toFixed(2)}</p>
+          <p><strong>50% de ganancia:</strong> $${profit50.toFixed(2)}</p>
+          <p><strong>100% de ganancia:</strong> $${profit100.toFixed(2)}</p>
+        `;
+
+        document.getElementById('results').innerHTML = detailedResults;
+      } else {
+        alert("Clave incorrecta. No se pueden mostrar los detalles.");
+      }
+    }
+
+    function checkAdminPassword() {
+      const password = document.getElementById('adminPassword').value;
+      if (password === ADMIN_PASSWORD) {
+        document.getElementById('adminPanel').classList.remove('hidden');
+      } else {
+        alert("Clave incorrecta. Acceso denegado.");
+      }
+    }
+
+    function updateOperatingCosts() {
+      for (let cost in operatingCosts) {
+        operatingCosts[cost] = parseFloat(document.getElementById(cost).value);
+      }
+      
+      const totalMonthlyCost = Object.values(operatingCosts).reduce((a, b) => a + b, 0);
+      costPerMinute = totalMonthlyCost / 2400;
+
+      localStorage.setItem('operatingCosts', JSON.stringify(operatingCosts));
+      alert(`Costos operativos actualizados y guardados. Nuevo costo por minuto: $${costPerMinute.toFixed(2)}`);
+    }
+
+    function addNewMaterial() {
+      const newMaterial = document.getElementById('newMaterial').value;
+      const newMaterialCost = parseFloat(document.getElementById('newMaterialCost').value);
+
+      if (newMaterial && newMaterialCost) {
+        const materialKey = newMaterial.toLowerCase().replace(/\s+/g, '');
+        materials[materialKey] = { name: newMaterial, cost: newMaterialCost };
+        updateMaterialsList();
+        updateMaterialSelect();
+        localStorage.setItem('materials', JSON.stringify(materials));
+        alert(`Material "${newMaterial}" agregado exitosamente y guardado.`);
+      } else {
+        alert("Por favor, ingrese un nombre y costo válido para el nuevo material.");
+      }
+    }
+
+    function updateMaterialsList() {
+      const materialsList = document.getElementById('materialsList');
+      materialsList.innerHTML = '<h3>Materiales Disponibles</h3>';
+      for (let key in materials) {
+        const costPerCm2 = (materials[key].cost / SHEET_AREA * 100).toFixed(4);
+        materialsList.innerHTML += `
+          <div>
+            <span>${materials[key].name}</span>
+            <input type="number" id="cost-${key}" value="${materials[key].cost}" step="0.01" min="0" onchange="updateMaterialCost('${key}')">
+            <span>($${costPerCm2}/cm²)</span>
+          </div>
+        `;
+      }
+    }
+
+    function updateMaterialCost(key) {
+      const newCost = parseFloat(document.getElementById(`cost-${key}`).value);
+      if (!isNaN(newCost) && newCost >= 0) {
+        materials[key].cost = newCost;
+        const costPerCm2 = (newCost / SHEET_AREA * 100).toFixed(4);
+        localStorage.setItem('materials', JSON.stringify(materials));
+        alert(`Costo de ${materials[key].name} actualizado a $${newCost.toFixed(2)} por plancha ($${costPerCm2}/cm²) y guardado.`);
+        updateMaterialsList();
+      } else {
+        alert("Por favor, ingrese un costo válido.");
+        document.getElementById(`cost-${key}`).value = materials[key].cost;
+      }
+    }
+
+    function updateMaterialSelect() {
+      const materialSelect = document.getElementById('material');
+      materialSelect.innerHTML = '';
+      for (let key in materials) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = materials[key].name;
+        materialSelect.appendChild(option);
+      }
+    }
+
+    function loadSavedData() {
+      for (let cost in operatingCosts) {
+        document.getElementById(cost).value = operatingCosts[cost];
+      }
+      updateOperatingCosts();
+      updateMaterialsList();
+      updateMaterialSelect();
+    }
+
+    loadSavedData();
+  </script>
+</body></html>
