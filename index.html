@@ -144,21 +144,21 @@
     const ADMIN_PASSWORD = "0314";
 
     let materials = JSON.parse(localStorage.getItem('materials')) || {
-      mdf3: { name: "MDF 3mm", cost: 1000 },
-      mdf5: { name: "MDF 5mm", cost: 1500 },
-      mdf9: { name: "MDF 9mm", cost: 2000 },
-      mdfWhite: { name: "MDF Blanco", cost: 1800 },
-      acrylic: { name: "Acrílico", cost: 2500 }
+      mdf3: { name: "MDF 3mm", cost: 4300 },
+      mdf5: { name: "MDF 5mm", cost: 5600 },
+      mdf9: { name: "MDF 9mm", cost: 8810 },
+      mdfWhite: { name: "MDF Blanco", cost: 7600 },
+      acrylic: { name: "Acrílico", cost: 12000 }
     };
 
     let operatingCosts = JSON.parse(localStorage.getItem('operatingCosts')) || {
-      rent: 1000,
-      salaries: 2000,
-      electricity: 200,
-      taxes: 500,
-      depreciation: 300,
-      laserTube: 100,
-      maintenance: 150
+      rent: 370000,
+      salaries: 1000000,
+      electricity: 75000,
+      taxes: 40000,
+      depreciation: 160000,
+      laserTube: 160000,
+      maintenance: 30000
     };
 
     let costPerMinute = 0;
